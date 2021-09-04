@@ -56,10 +56,47 @@ addIncome.addEventListener("click", function () {
   clearInput([incomeTitle, incomeAmount]);
 });
 
+incomeList.addEventListener("click", deleteOrEdit);
+expenseList.addEventListener("click", deleteOrEdit);
+allList.addEventListener("click", deleteOrEdit);
+
+function deleteOrEdit(event) {
+  const targetBtn = event.target;
+
+  const entry = targetBtn.parentNode;
+
+  if (targetBtn.id == DELETE) {
+    deleteEntry(entry);
+  } else if (targetBtn.id == EDIT) {
+    editEntry(entry);
+  }
+}
+
+function deleteEntry(entry) {
+  ENTRY_LIST.splice(entry.id, 1);
+
+  updateUI();
+}
+
+function editEntry(entry) {
+  console.log(entry);
+  let ENTRY = ENTRY_LIST[entry.id];
+
+  if (ENTRY.type == "income") {
+    incomeAmount.value = ENTRY.amount;
+    incomeTitle.value = ENTRY.title;
+  } else if (ENTRY.type == "expense") {
+    expenseAmount.value = ENTRY.amount;
+    expenseTitle.value = ENTRY.title;
+  }
+
+  deleteEntry(entry);
+}
+
 function updateUI() {
   let income = calculateTotal("income", ENTRY_LIST);
-  let outcome = Math.abs(calculateTotal("expense", ENTRY_LIST));
-  let balance = calculateBalance(income, outcome);
+  let outcome = calculateTotal("expense", ENTRY_LIST);
+  let balance = Math.abs(calculateBalance(income, outcome));
 
   clearElement([expenseList, incomeList, allList]);
   let sign = income >= outcome ? "$" : "-$";
